@@ -2,9 +2,7 @@ const express = require("express");
 const router = express.Router();
 const Book = require("../models/book");
 const Author = require("../models/author");
-const { route } = require("express/lib/router");
-const { redirect } = require("express/lib/response");
-const imageMineTypes = ["image/jpeg", "image/png", "image/gif"];
+const imageMimeTypes = ["image/jpeg", "image/png", "images/gif"];
 
 // All Books Route
 router.get("/", async (req, res) => {
@@ -34,7 +32,7 @@ router.get("/new", async (req, res) => {
   renderNewPage(res, new Book());
 });
 
-// Create Book route
+// Create Book Route
 router.post("/", async (req, res) => {
   const book = new Book({
     title: req.body.title,
@@ -52,7 +50,7 @@ router.post("/", async (req, res) => {
   }
 });
 
-// Show book route
+// Show Book Route
 router.get("/:id", async (req, res) => {
   try {
     const book = await Book.findById(req.params.id).populate("author").exec();
@@ -62,7 +60,7 @@ router.get("/:id", async (req, res) => {
   }
 });
 
-// Edit book route
+// Edit Book Route
 router.get("/:id/edit", async (req, res) => {
   try {
     const book = await Book.findById(req.params.id);
@@ -72,7 +70,7 @@ router.get("/:id/edit", async (req, res) => {
   }
 });
 
-// Update Book route
+// Update Book Route
 router.put("/:id", async (req, res) => {
   let book;
   try {
@@ -96,7 +94,7 @@ router.put("/:id", async (req, res) => {
   }
 });
 
-// Delete book page
+// Delete Book Page
 router.delete("/:id", async (req, res) => {
   let book;
   try {
@@ -115,12 +113,10 @@ router.delete("/:id", async (req, res) => {
   }
 });
 
-// render a new page
 async function renderNewPage(res, book, hasError = false) {
   renderFormPage(res, book, "new", hasError);
 }
 
-// render edit page
 async function renderEditPage(res, book, hasError = false) {
   renderFormPage(res, book, "edit", hasError);
 }
@@ -132,7 +128,6 @@ async function renderFormPage(res, book, form, hasError = false) {
       authors: authors,
       book: book,
     };
-
     if (hasError) {
       if (form === "edit") {
         params.errorMessage = "Error Updating Book";
@@ -149,7 +144,7 @@ async function renderFormPage(res, book, form, hasError = false) {
 function saveCover(book, coverEncoded) {
   if (coverEncoded == null) return;
   const cover = JSON.parse(coverEncoded);
-  if (cover != null && imageMineTypes.includes(cover.type)) {
+  if (cover != null && imageMimeTypes.includes(cover.type)) {
     book.coverImage = new Buffer.from(cover.data, "base64");
     book.coverImageType = cover.type;
   }
